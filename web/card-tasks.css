@@ -1,0 +1,134 @@
+/* 多任务轮播区块（card-tasks.js 的配套样式）。
+ * 约束在现有卡片尺寸内：不加滚动、不撑高，紧凑模式只留标题/状态/活动。
+ * 注意 compact 有两种挂法：独立卡片窗口挂在 body 上，宠物窗挂在 #card 上。
+ */
+
+.card-tasks {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ct-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ct-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #7f8c9b;
+  flex: none;
+}
+
+.ct-state {
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.ct-spacer {
+  flex: 1;
+}
+
+.ct-count {
+  color: #9aa7bd;
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+}
+
+.ct-title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ct-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr;
+  gap: 3px 8px;
+  align-items: baseline;
+  margin-bottom: 3px;
+}
+
+.ct-row .k {
+  color: #9aa7bd;
+  font-size: 11px;
+}
+
+.ct-row .v {
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+}
+
+/* 单列行（上下文）让值占满剩余宽度 */
+.ct-row.ct-minor {
+  grid-template-columns: auto 1fr;
+}
+
+.ct-activity {
+  margin-top: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #cfd8ea;
+  font-size: 11.5px;
+  line-height: 1.45;
+  max-height: 44px;
+  overflow: hidden;
+}
+
+.ct-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.ct-dot-btn {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.ct-dot-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.ct-dot-btn.active {
+  background: #eef3ff;
+  transform: scale(1.15);
+}
+
+/* —— 紧凑模式：只保留标题、状态与活动，次要行全部隐藏 —— */
+body.compact .ct-row,
+body.compact .ct-dots,
+body.compact .ct-count,
+#card.compact .ct-row,
+#card.compact .ct-dots,
+#card.compact .ct-count {
+  display: none;
+}
+
+body.compact .ct-title,
+#card.compact .ct-title {
+  font-size: 12.5px;
+  margin-bottom: 0;
+}
+
+body.compact .ct-activity,
+#card.compact .ct-activity {
+  margin-top: 4px;
+  max-height: 30px;
+}

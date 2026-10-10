@@ -51,6 +51,8 @@ function render(payload) {
   $("source").textContent = current.source || "—";
   $("activity").textContent = current.activity || "等待 Codex 开始工作…";
   $("say").textContent = current.say || "";
+  // 多任务轮播：tasks > 1 时接管，否则自动隐藏
+  if (window.CardTasks) CardTasks.render(document.querySelector(".card-body"), current);
 }
 
 bridge.on((raw) => {

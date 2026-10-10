@@ -92,6 +92,7 @@ const ui = {
   chipDot: el("chip-dot"),
   toast: el("toast"),
   card: el("card"),
+  cardBody: el("card").querySelector(".card-body"),
   cardDot: el("card-dot"),
   cardState: el("card-state"),
   cardTitle: el("card-title"),
@@ -797,6 +798,8 @@ function applyState(payload) {
   ui.cardSource.textContent = payload.source || "—";
   ui.cardActivity.textContent = payload.activity || "等待 Codex 开始工作…";
   ui.cardSay.textContent = payload.say || "";
+  // 多任务轮播：tasks > 1 时接管，否则自动隐藏
+  if (window.CardTasks) CardTasks.render(ui.cardBody, payload);
 
   state.elapsed = payload.elapsed || 0;
 

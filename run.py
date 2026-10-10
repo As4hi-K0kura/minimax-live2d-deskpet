@@ -2612,14 +2612,33 @@ class PetHost:
 # -------------------------------------------------------------------- state feed
 
 
-def state_loop(host: PetHost, interval: float = 1.0) -> None:
+def pick_state_module():
+    """选状态数据源：默认 MiniMax Code；没有它的数据或设了
+    CODEXPET_STATE_SOURCE=codex 时退回 Codex。"""
     import codex_state
+
+    source = (os.environ.get("CODEXPET_STATE_SOURCE") or "").strip().lower()
+    if source != "codex":
+        try:
+            import minimax_state
+
+            if minimax_state.available():
+                return minimax_state
+            log("未找到 MiniMax Code 本地数据，退回 Codex 数据源")
+        except Exception as exc:  # noqa: BLE001
+            log("MiniMax 数据源不可用（%r），退回 Codex" % (exc,))
+    return codex_state
+
+
+def state_loop(host: PetHost, interval: float = 1.0) -> None:
+    state_module = pick_state_module()
+    log("状态数据源：%s" % getattr(state_module, "SOURCE_NAME", "Codex"))
 
     last_payload = None
     last_send = 0.0
     while True:
         try:
-            payload = codex_state.snapshot()
+            payload = state_module.snapshot()
         except Exception as exc:  # noqa: BLE001
             log("读取 Codex 状态失败：%r" % (exc,))
             payload = {"state": "idle", "label": "空闲", "title": "", "activity": ""}
@@ -2644,9 +2663,9 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.state_only:
-        import codex_state
+        state_module = pick_state_module()
 
-        print(json.dumps(codex_state.snapshot(), ensure_ascii=False, indent=2))
+        print(json.dumps(state_module.snapshot(), ensure_ascii=False, indent=2))
         return 0
 
     if not single_instance():
